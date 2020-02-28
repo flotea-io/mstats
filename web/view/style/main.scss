@@ -1,0 +1,275 @@
+@import "bootstrap-switch.scss";
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
+
+@import "_variables-custum.scss";
+//Utilities
+@import "chartist.min.css";
+@import "chartist-plugin-tooltip.css";
+@import "jquery-ui.min.css";
+@import "dropdown-submenu.css";
+
+
+@media (min-width: 1366px) {
+.row > div{
+  flex:none;
+}
+}
+
+@media (max-width: 376px) {
+ .machine_operation .btn{
+   font-size: .600rem;
+ }
+}
+
+.dropdown-submenu{
+  a{
+    font-size: 16px;
+    color: black;
+    text-decoration: none;
+  }
+}
+
+@mixin filter($display1,$display2, $display3, $display4) {
+      form > .filter{
+        display: $display1 !important;
+      }
+      .min-menu .filter{
+        display:$display2 !important;
+      }
+      .full-menu{
+        display: $display3;
+      }
+      .min-menu{
+        display: $display4;
+      }
+}
+
+//.box { @include transform(rotate(30deg)); }
+
+@media (max-width: 991px){
+  @include filter(inline-block, none, flex, none);
+}
+
+@media (min-width: 992px) and (max-width: 1440px){
+  @include filter(none, inline-block, none ,flex);
+}
+
+@media (min-width: 1441px){
+  @include filter(inline-block, none, flex, none);
+}
+
+.display-on-hover:hover .dropdown-menu{
+  display: block;
+  top: -9px;
+  right: -2px;
+}
+
+.machine_operation .dropdown-menu.show.no-transform{
+  transform: none!important;
+  top: 38px!important;
+  left: auto!important;
+  right: 0px!important;
+}
+
+.dropdown.machine_operation{
+    margin-top: -12px;
+}
+.dropdown.machine_operation button:after{
+  content: none;
+}
+
+.ct-series-a .ct-bar, .ct-series-a .ct-line, .ct-series-a .ct-point, .ct-series-a .ct-slice-donut {
+     stroke: #007bff;
+}
+.ct-series-b .ct-bar, .ct-series-b .ct-line, .ct-series-b .ct-point, .ct-series-b .ct-slice-donut {
+     stroke: #6c757d;
+}
+
+.templete_machine{
+  padding-right: -20px !important;
+  padding-left: -20px !important;
+}
+
+.navbar {
+    padding: 0.1rem 1rem;
+}
+
+
+.card-status{
+  width: 6px;
+  height: 95%;
+  margin-bottom: 20px;
+  display: inline-block;
+  position: absolute;
+  left: 0px;
+
+  -webkit-border-top-right-radius: 2px;
+  -webkit-border-bottom-right-radius: 2px;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+
+.stick_with_card{
+    margin: 0px -20px 0px -20px !important;
+    padding-bottom: 3px;
+    background-color: white;
+    position: relative;
+
+}
+
+#gpus_container .mobile{
+  margin: 4px 4px 4px 8px;
+  position: relative;
+
+}
+#gpus_container .mobile>div:first-child{
+    z-index: 1;
+}
+
+#gpus_container .mobile .card-status{
+  left: -5px;
+border-top-left-radius: 10px;
+border-bottom-left-radius: 10px;
+}
+
+#gpus_container .card-status{
+margin-bottom: 1px;
+border-top-left-radius: 10px;
+border-bottom-left-radius: 10px;
+}
+
+.h-0{
+//height: 0;
+margin-top: -52px;
+
+  -webkit-transition: margin-top 0.3s ease;
+    -moz-transition: margin-top 0.3s ease;
+    -o-transition: margin-top 0.3s ease;
+    transition: margin-top 0.3s ease;
+}
+
+
+.h-0.show{
+  margin-top: 0px;
+  //height: 44px;
+
+}
+
+.gpu-shadow{
+  box-shadow: 0px 0px 10px -3px black;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.fan_css .form-control{
+  width: 75%;
+  height: 1.75rem;
+  margin-right: 2px;
+  margin-left: 6px;
+  margin-top: 2px;
+  padding: 0px;
+}
+
+.d-md-none .form-control{
+  margin-left: 8px;
+  margin-right: 14px;
+  padding-right: 2px;
+}
+
+.d-md-flex .gpu_mhs{
+  width: 40px;
+}
+
+
+.stick_with_card .d-md-flex > div{
+  padding: 0px 5px;
+}
+#editHardwareModal .modal-dialog{
+  margin-left: 15px;
+  max-width:none;
+}
+#pinsHolder .draggable{
+  margin-right: .5rem;
+  margin-bottom: .5rem;
+}
+
+.draggable{
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+    text-align: center;
+}
+
+
+.ui-draggable-dragging{
+  z-index: 5;
+}
+.minerPinsHolder .droppable{
+  width: calc(50% - 2px);
+  height: 70px;
+  float: left;
+  border: 1px dashed black;
+  position: relative;
+}
+
+.minerPinsHolder label{
+  display: block;
+  text-align: center;
+}
+
+.minerPinsHolder>div{
+  width: 120px;
+  display: inline-block;
+  margin: 0px 10px 10px 20px;
+}
+.ui-droppable-hover{
+  background-color: #f1f1f1;
+}
+
+.droppable.reset{
+  margin-right: 4px;
+}
+
+.form-control-coustum{
+  width:104%;
+  height:25px;
+  margin-right: 0px;
+  padding-left: 23px;
+  align-self: center;
+}
+
+#confirmOperation, #addEditConfig{
+  z-index:1100;
+}
+
+#pinsHolder{
+  height: 6em;
+  border: 1px dashed black;
+  overflow-y: auto;
+}
+
+#editHardwareModal .modal-lg{
+  width: 1000px;
+}
+
+#filter{
+  width: 220px;
+}
+
+#showIssues img{
+  margin-top: -4px;
+}
+
+#addEdit_wallet_currency, {
+  padding-left: 5px;
+padding-right: 0px;
+}
+
+img{
+  width: 20px;
+  height: 18px;
+}
+
+
+
+.tooltip-arrow{position:absolute;width:0;height:0;border-color:transparent;border-style:solid}.tooltip.top .tooltip-arrow{bottom:-5px;left:50%;margin-left:-5px;border-width:5px 5px 0;border-top-color:#000}.tooltip.top-left .tooltip-arrow{bottom:0;left:5px;border-width:5px 5px 0;border-top-color:#000}.tooltip.top-right .tooltip-arrow{right:5px;bottom:0;border-width:5px 5px 0;border-top-color:#000}.tooltip.right .tooltip-arrow{top:50%;left:0;margin-top:-5px;border-width:5px 5px 5px 0;border-right-color:#000}.tooltip.left .tooltip-arrow{top:50%;right:0;margin-top:-5px;border-width:5px 0 5px 5px;border-left-color:#000}.tooltip.bottom .tooltip-arrow{top:0;left:50%;margin-left:-5px;border-width:0 5px 5px;border-bottom-color:#000}.tooltip.bottom-left .tooltip-arrow{top:0;left:5px;border-width:0 5px 5px;border-bottom-color:#000}.tooltip.bottom-right .tooltip-arrow{top:0;right:5px;border-width:0 5px 5px;border-bottom-color:#000}.popover{position:absolute;top:0;left:0;z-index:1060;display:none;max-width:276px;padding:1px;text-align:left;white-space:normal;background-color:#fff;-webkit-background-clip:padding-box;background-clip:padding-box;border:1px solid #ccc;border:1px solid rgba(0,0,0,.2);border-radius:6px;-webkit-box-shadow:0 5px 10px rgba(0,0,0,.2);box-shadow:0 5px 10px rgba(0,0,0,.2)}.popover.top{margin-top:-10px}.popover.right{margin-left:10px}.popover.bottom{margin-top:10px}.popover.left{margin-left:-10px}.popover-title{padding:8px 14px;margin:0;font-size:14px;font-weight:400;line-height:18px;background-color:#f7f7f7;border-bottom:1px solid #ebebeb;border-radius:5px 5px 0 0}.popover-content{padding:9px 14px}.popover>.arrow,.popover>.arrow:after{position:absolute;display:block;width:0;height:0;border-color:transparent;border-style:solid}.popover>.arrow{border-width:11px}.popover>.arrow:after{content:"";border-width:10px}.popover.top>.arrow{bottom:-11px;left:50%;margin-left:-11px;border-top-color:#999;border-top-color:rgba(0,0,0,.25);border-bottom-width:0}.popover.top>.arrow:after{bottom:1px;margin-left:-10px;content:" ";border-top-color:#fff;border-bottom-width:0}.popover.right>.arrow{top:50%;left:-11px;margin-top:-11px;border-right-color:#999;border-right-color:rgba(0,0,0,.25);border-left-width:0}.popover.right>.arrow:after{bottom:-10px;left:1px;content:" ";border-right-color:#fff;border-left-width:0}.popover.bottom>.arrow{top:-11px;left:50%;margin-left:-11px;border-top-width:0;border-bottom-color:#999;border-bottom-color:rgba(0,0,0,.25)}.popover.bottom>.arrow:after{top:1px;margin-left:-10px;content:" ";border-top-width:0;border-bottom-color:#fff}.popover.left>.arrow{top:50%;right:-11px;margin-top:-11px;border-right-width:0;border-left-color:#999;border-left-color:rgba(0,0,0,.25)}.popover.left>.arrow:after{right:1px;bottom:-10px;content:" ";border-right-width:0;border-left-color:#fff}

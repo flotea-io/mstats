@@ -1,0 +1,146 @@
+
+    public editMachine(event: any) {
+      let miner = $(event.currentTarget).parents(".miner");
+      let machine_name = miner.attr("data-id");
+
+      $("#EditMachine").find("#edit_name").attr("value", machine_name);
+      $("#EditMachine").attr("data-miner", machine_name);
+      $.ajax({
+        url: api_ip + "/miners",
+        type: "get",
+        dataType: 'json'
+      }).done((respond: any) => {
+        $("#EditMachine").find("#edit_ip")
+          .attr("value", respond[machine_name].MinerName)
+          .attr("data-orig", respond[machine_name].MinerName);
+        $("#EditMachine").find("#edit_port")
+          .attr("value", respond[machine_name].MinerPort)
+          .attr("data-orig", respond[machine_name].MinerPort);
+      });
+    }
+
+
+
+
+    public toConsole(event: any) { //Icon in card whih moving to console of machine
+      let miner = $(event.currentTarget).parents(".miner");
+      let machine_name = miner.attr("data-id");
+
+      $.ajax({
+        url: api_ip + "/miners",
+        type: "get",
+        dataType: 'json'
+      }).done((respond: any) => {
+        let machine_console: string = respond[machine_name].MinerIP + ":" + respond[machine_name].MinerPort;
+        window.open("http://" + machine_console + "/", '_blank');
+      });
+    }
+
+
+
+  public checkingIsCorrect(ip: any, port: any): string {
+    var regex_ip = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    var regex_port = /^[0-9]{1,}$/;
+    var ip_repl = regex_ip.test(ip);
+    var port_repl = regex_port.test(port);
+
+    var reply: string = "";
+
+    if (!ip_repl || !port_repl) {
+      reply += "Incorrect input of ";
+      if (!ip_repl && !port_repl) {
+        reply += "Ip adress and Port";
+        $(".fill_ip")[0].setCustomValidity("Invalid field.")
+        $(".fill_port")[0].setCustomValidity("Invalid field.")
+      }
+
+      else if (!ip_repl && port_repl) {
+        reply += "Ip adress";
+        $(".fill_ip")[0].setCustomValidity("Invalid field.")
+
+      }
+
+      else if (ip_repl && !port_repl) {
+        reply += "Port";
+        $(".fill_port")[0].setCustomValidity("Invalid field.")
+      }
+      return reply;
+    } else return reply = "";
+
+  } //Checing if writed text is written correctly */
+
+
+
+
+    public checkingIsEmpty() {
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      var forms = $('.needs-validation');
+      // Loop over them and prevent submission
+      for (let i = 0; i < forms.length; i++) {
+        let form = forms[i];
+        form.addEventListener('submit', (event: any) => {
+
+          let ip = $(form).find(".fill_ip").val();
+          let port = $(form).find(".fill_port").val();
+          let name = $(form).find(".fill_name").val();
+          let machine_name = $("#EditMachine").attr("data-miner");
+          let error = this.checkingIsCorrect(ip, port);
+
+          if (error != "") {
+            event.preventDefault();
+            event.stopPropagation();
+            alert(error);
+          } else {
+            // TU
+            if ($(event.target).hasClass("add-machine-form")) {
+              this.addMachine(ip, port, name);
+            }
+            if ($(event.target).hasClass("edit-machine-form")) {
+
+              let counter = 0;
+              let counterResponse = 0;
+              let checkCounter = () => {
+                counterResponse++;
+                if (counter == counterResponse)
+                  location.reload();
+              };
+              let original_ip = $(form).find(".fill_ip").attr("data-orig");
+              let original_port = $(form).find(".fill_port").attr("data-orig");
+
+              if (ip != original_ip) {//Changing ip if diffrend
+                counter++;
+                $.get(api_ip + "/miners/edit/" + machine_name + "/ip/" + ip,
+                  function(data: any) {
+                    if (data.status == 1) {
+                      alert(data.log);
+                    }
+                    checkCounter();
+                  });
+              }
+
+              if (port != original_port) {//Changing port if diffrend
+                counter++;
+                $.get(api_ip + "/miners/edit/" + machine_name + "/port/" + port,
+                  function(data: any) {
+                    if (data.status == 1) {
+                      alert(data.log);
+                    }
+                    checkCounter();
+                  });
+              }
+
+              if (name != machine_name) { //Changing name if diffrend
+                counter++;
+                $.get(api_ip + "/miners/edit/" + machine_name + "/name/" + name,
+                  function(data: any) {
+                    if (data.status == 1) {
+                      alert(data.log);
+                    }
+                    checkCounter();
+                  });
+              }
+            }
+          }
+        });
+      }
+    }

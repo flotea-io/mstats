@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="Jędrzej Jagiełło, Bartek Blicharski adn Martin Morawiec">
+  <title>Mining Controler</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="style/main.css" rel="stylesheet">
+  <link href="style/bootstrap-big-grid.min.css" rel="stylesheet">
+
+  <!-- Bootstrap core JavaScript
+  ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="src/jquery.min.js"></script>
+  <script src="src/popper.js"></script>
+  <script src="src/bootstrap.min.js"></script>
+  <script src="src/position-calculator.min.js"></script>
+  <script src="src/moment.js"></script>
+  <script src="src/bootbox.min.js"></script>
+  <script src="src/chartist.min.js"></script>
+  <script src="src/chartist-plugin-tooltip.min.js"></script>
+  <script src="src/jquery-ui.min.js"></script>
+  <script src="src/cookie.js"></script>
+  <script src="src/script.js"></script>
+
+</head>
+
+<body style="background-color: #f1f1f1">
+
+
+  <!--Menu-->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="#">Mining Controler</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+
+      <!--Middle size menu-->
+      <div class="min-menu mr-2">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <button class="btn btn-dark dropdown p-0">
+            <a class="btn btn-dark dropdown-toggle" href="#" role="button" id="min_menu_dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Machine
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="min_menu_dropdown">
+              <li><a class="dropdown-item" data-toggle="modal" data-target="#addMachine">Add machine</a></li>
+              <li><a class="dropdown-item" data-toggle="modal" data-target="#showIssues"><span class="numberOfIssues"></span></a></li>
+              <li class="dropdown-item dropdown-submenu">
+                  <a tabindex="-1" href="#" class="">Sort by</a>
+                  <ul class="dropdown-menu sortByDropdown">
+                    <li><a class="dropdown-item active sortByName">Name</a></li>
+                    <li><a class="dropdown-item sortByRunning">Running time</a></li>
+                    <li><a class="dropdown-item sortByMh">Mh/s</a></li>
+                    <li><a class="dropdown-item sortByTemp">Temperature</a></li>
+                  </ul>
+              </li>
+              <li>
+                <input class="form-control filter" type="text" placeholder="Search machine" aria-label="Search" />
+              </li>
+          </ul>
+        </button>
+          </li>
+          <li class="nav-item active">
+            <button class="nav-link btn btn-dark text-white editHardwareButton d-none" data-toggle="modal" data-target="#editHardwareModal">Edit hardware </button>
+          </li>
+          <li class="nav-item active mr-2">
+            <button class="nav-link btn btn-dark showStat" data-toggle="modal" data-target="#statistics">
+            Statistics</button>
+          </li>
+        </ul>
+      </div>
+
+      <!--Small and Full size menu-->
+      <div class="full-menu">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <button class="nav-link btn btn-dark text-white border-0" data-toggle="modal" data-target="#addMachine">
+            Add machine</button>
+          </li>
+          <li class="nav-item active">
+            <button class="nav-link btn btn-dark text-white editHardwareButton d-none" data-toggle="modal" data-target="#editHardwareModal">Edit hardware </button>
+          </li>
+          <li class="nav-item active">
+            <button class="nav-link btn btn-dark showStat" data-toggle="modal" data-target="#statistics">
+              Statistics</button>
+          </li>
+          <li class="nav-item active d-none issuesButton mr-2">
+            <button class="nav-link btn btn-dark text-white" data-toggle="modal" data-target="#showIssues">
+                <span class="numberOfIssues"></span>
+              </button>
+          </li>
+
+          <li class="nav-item">
+            <div class="dropdown sortByDropdown" style="margin-top:3px">
+              <button class="btn btn-dark dropdown-toggle pl-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Sort by
+                </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item active sortByName">Name</a>
+                <a class="dropdown-item sortByRunning">Running time</a>
+                <a class="dropdown-item sortByMh">Mh/s</a>
+                <a class="dropdown-item sortByTemp">Temperature</a>
+              </div>
+            </div>
+          </li>
+          p <li class="nav-item text-white wallet_menagment d-block d-md-none" data-toggle="modal" data-target="#walletMenagment">Wallet Menagment</li>
+          <li class="nav-item text-white config_menagment d-block d-md-none pt-2" data-toggle="modal" data-target="#configMenagment">Config Menagment</li>
+          <li class="nav-item text-white d-block d-md-none pt-4">Log out</li>
+      </div>
+      <form class="form-inline" style="margin-left: auto">
+        <div class="navbar-text text-white total_data mr-2"></div>
+        <input class="form-control filter" type="text" placeholder="Search machine" aria-label="Search2" />
+
+        <div class="navbar-text d-none d-md-block">
+          <div class="dropdown">
+            <button class="btn btn-dark dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <img src="./style/icons/icon_profil.svg" alt="Profil icon" width="20" height="20" />
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item text-dark wallet_menagment" data-toggle="modal" data-target="#walletMenagment">Wallet Menagment</a>
+              <a class="dropdown-item text-dark config_menagment" data-toggle="modal" data-target="#configMenagment">Config Menagment</a>
+              <a class="dropdown-item text-dark logIn" data-toggle="modal" data-target="#logIn">Log in</a>
+              <a class="dropdown-item text-dark">Log out</a>
+            </div>
+          </div>
+        </div>
+      </form>
+      </ul>
+    </div>
+  </nav>
+
+  <!--Log in modal -->
+  <div class="modal fade" id="logIn" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        </div>
+        <div class="modal-body">
+          <form class="form-signin">
+              <div class="text-center mb-4">
+                <h1 class="h3 mb-3 font-weight-normal">Log In</h1>
+              </div>
+
+              <div class="form-label-group">
+                <label for="inputEmail">Nick</label>
+                <input type="text" id="logInNick" class="form-control" placeholder="Nick" required>
+              </div>
+
+              <div class="form-label-group mt-2">
+                <label for="inputPassword">Password</label>
+                <input type="password" id="logInPassword" class="form-control" placeholder="Password" required>
+              </div>
+
+              <!-- <div class="checkbox mt-2">
+                <label>
+                  <input type="checkbox" id="logInRemember"> Remember me
+                </label>
+              </div> -->
+              <button class="btn btn-lg btn-primary btn-block mt-3" id="logInButton" type="button">Sign in</button>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Add Machine Modal -->
+  <div class="modal fade" id="addMachine" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Add machines</h4>
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        </div>
+
+        <div class="addMachineList">
+          <div class="machinesToAdd d-none my-2">
+            <div class="nameToAdd flex-fill" style="width: 20%"></div><button class="flex-fill buttonToAdd btn btn-sm btn-outline-success">Add machine card</button>
+          </div>
+        </div>
+
+        <div class="modal-body">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Edit Machine Modal -->
+  <div class="modal fade" id="EditMachine" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Edit machine</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <!--Form -->
+          <form class="needs-validation edit-machine-form" action="" method="GET" novalidate>
+            <div class="col-12  mb-3">
+              <label for="name">Name</label>
+              <input type="text" class="form-control fill_name" id="edit_name">
+              <div class="invalid-feedback">
+                Field is empty.
+              </div>
+            </div>
+            <div class="col-12 mb-3">
+              <label for="ip">Ip</label>
+              <input type="text" class="form-control fill_ip" id="edit_ip">
+              <div class="invalid-feedback" id="ip_invalid">
+                Field is empty/error. </div>
+            </div>
+            <div class="col-12 mb-3">
+              <label for="port">Port</label>
+              <input type="text" class="form-control fill_port" id="edit_port">
+              <div class="invalid-feedback">
+                Field is empty/error.
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success float-right mr-2" id="EditMachineBtn">Edit machine</button>
+            <button type="button" class="btn btn-md btn-outline-dark delete float-left" data-toggle="modal" data-target="#confirmOperation" data-tooltip="yes" title="Delete card view from website">Delete</button>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Delete, Reboot, Reset, Hard reset, On/Off, delete wallet confirm box  -->
+  <div id="confirmOperation" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- dialog body -->
+        <div class="modal-header">
+          Are you sure you want execute this operation?<button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+
+          <div class="input-group my-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Reason:</span>
+            </div>
+            <input type="text" class="form-control" placeholder="0" id="reason_of_management">
+          </div>
+          <div class="wallet_error text-center text-danger"></div>
+          <button type="button" class="btn btn-secondary float-left" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary confirm_operation float-right">OK</button>
+
+          <button type="button" class="btn d-none TurnOn btn-success float-right">On</button>
+          <button type="button" class="btn d-none TurnOff btn-dark float-right mr-2">Off</button>
+
+        </div>
+        <!-- dialog buttons -->
+        <div class="modal-footer d-none">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Issues modal -->
+  <div class="modal fade" id="showIssues" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title numberOfIssues">Issues</h3>
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        </div>
+        <div class="modal-body">
+
+          <h5 id="overhiting_span" class="d-none">
+              <img src="./style/icons/icon_overhiting.svg" alt="Overhiting icon" class="mr-2"> Overheating
+              <span id="overhiting_counter"> </span>
+          </h5>
+
+          <div class="overhiting d-none border-bottom "> </div>
+
+          <h5 id="deadCards_span" class="d-none mt-1">
+              <img src="./style/icons/icon_dead-cards.svg" alt="Dead cards icon" class="mr-2"/> Dead Cards
+              <span id="deadCards_counter"> </span>
+          </h5>
+
+          <div class="deadCards d-none border-bottom"> </div>
+
+          <h5 id="deadMachines_span" class="d-none mt-1">
+              <img src='style/icons/icon_machine_not_works.svg' alt='Not working machines' class="mr-2"/>Dead Machines
+              <span id="deadMachines_counter"> </span>
+          </h5>
+
+          <div class="deadMachines d-none"> </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Statistics modal -->
+  <div class="modal fade" id="statistics" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title w-100">Statistics
+                          <small class="float-right text-muted">Last measurement: <span class="last-time"></span></small>
+                        </h3>
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class='col-sm-6'>
+              <div class='card'>
+                <div class='card-body'>
+                  <h3>Temperature</h3>
+                  <span class='badge badge-primary'><span class="t1"></span>°C</span>
+                  <span class='badge badge-secondary'><span class="t2"></span>°C</span>
+                </div>
+              </div>
+            </div>
+            <div class='col-sm-6'>
+              <div class='card'>
+                <div class='card-body'>
+                  <h3>Humidity</h3>
+                  <span class='badge badge-primary'>
+                                  <span class="v1"></span>%
+                  </span>
+                  <span class='badge badge-secondary'>
+                                  <span class="v2"></span>%
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--Chart-->
+          <div class="chart-cs ct-major-tenth mt-t"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Wallet menagment -->
+  <div class="modal fade" id="walletMenagment" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Wallet Menagment</h4>
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        </div>
+        <div class="modal-body">
+          <div class="row text-center">
+            <div class="col-3 col-lg-1">Name</div>
+            <div class="d-none d-lg-block col-7">Address</div>
+            <div class="col-3 col-lg-1 pl-0 pr-0">Currency</div>
+            <div class="col-4 col-lg-2">Edit/Delete</div>
+            <div class="col-2 col-lg-1 pl-0 pr-2">Default</div>
+          </div>
+          <div id="wallets_menagment_container"></div>
+
+          <div id="walletManagmentTemplate" class="d-none">
+            <div class="row mt-2 text-center">
+              <div class="col-3 col-lg-1 mt-1 wallet_name">Wallet_name</div>
+              <div class="d-none d-lg-block col-3 col-lg-7 mt-1 wallet_address">Address</div>
+              <div class="col-3 col-lg-1 mt-1 wallet_currency">Currency</div>
+              <div class="col-4 col-lg-2 mt-1">
+                <button class="btn wallet_edit pt-0" data-toggle="modal" data-target="#addEditWallet">
+                  <img src="./style/icons/icon_edit-pencil.svg" alt="Edit wallet"/></button>
+                <button class="btn wallet_edit wallet_delete pt-0" data-toggle="modal" data-target="#confirmOperation">
+                <img src="./style/icons/icon_rubbish-bin.svg" alt="Delete wallet"/></button>
+              </div>
+              <div class="col-2 col-lg-1 mt-1 pl-0 pr-2">
+                <input type="radio" class="wallet_isDefault" aria-label="Checkbox for default" name="default_wallet">
+                </div>
+            </div>
+          </div>
+          <button class="btn btn-outline-success wallet_add float-right mt-2" data-toggle="modal" data-target="#addEditWallet">Add Wallet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add and edit wallet modal -->
+  <div class="modal fade" id="addEditWallet" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Add/Edit wallet</h4>
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        </div>
+        <div class="modal-body">
+
+          <div class="form-row">
+            <div class="col-3 mb-3">
+              <label for="addEdit_wallet_name">Name</label>
+              <input id="addEdit_wallet_name" class="form-control" type="text" placeholder="Wallet1" required/></div>
+            <div class="col-7 mb-3">
+              <label for="addEdit_wallet_address">Wallet address</label>
+              <input id="addEdit_wallet_address" class="form-control" type="text" placeholder="0x0000000000000000000000000000000000000002" required/>
+            </div>
+            <div class="col-2 mb-3">
+              <label for="addEdit_wallet_currency">Currecy: </label>
+              <select id="addEdit_wallet_currency" class="form-control form-control-select wallet_currency_select col-10">
+                        <option value="ETH" selected>ETH</option>
+                        <option value="ETC">ETC</option>
+                  </select>
+            </div>
+            <div style="display: hidden">
+              <div id="addEdit_wallet_default" class="bg-warning">
+              </div>
+            </div>
+          </div>
+
+          <p class="addEditWalletErrors d-none text-danger">Please fill all text fields</p>
+          <button class="btn btn-outline-success float-right mt-2">Confirm</button>
+          <button class="btn btn-outline-secondary float-right mt-2 mr-2" class="close" data-dismiss="modal">Cancel</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Config menagment -->
+  <div class="modal fade" id="configMenagment" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Config Menagment</h4>
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        </div>
+        <div class="modal-body">
+          <div class="row text-center">
+            <div class="col-4">Name</div>
+            <div class="d-none col-8">Params</div>
+            <div class="col-4 pl-0 pr-0">Currency</div>
+            <div class="col-4">Edit/Delete</div>
+          </div>
+          <div id="configs_menagment_container"></div>
+
+          <div id="configManagmentTemplate" class="d-none">
+            <div class="row mt-2 text-center">
+              <div class="col-4 mt-1 config_name">Config_name</div>
+              <div class="d-none mt-1 config_params">Parameters</div>
+              <div class="col-4 mt-1 config_currency">Currency</div>
+              <div class="col-4 mt-1">
+                <button class="btn config_edit pt-0" data-toggle="modal" data-target="#addEditConfig">
+                  <img src="./style/icons/icon_edit-pencil.svg" alt="Edit config"/></button>
+                <button class="btn config_edit config_delete pt-0" data-toggle="modal" data-target="#confirmOperation">
+                <img src="./style/icons/icon_rubbish-bin.svg" alt="Delete config"/></button>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-outline-success config_add float-right mt-2" data-toggle="modal" data-target="#addEditConfig">Add Config</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add and edit config modal -->
+  <div class="modal fade" id="addEditConfig" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Add/Edit config</h4>
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        </div>
+        <div class="modal-body">
+
+          <div class="form-row">
+            <div class="col-3 mb-3">
+              <label for="addEdit_config_name">Name</label>
+              <input id="addEdit_config_name" class="form-control" type="text" placeholder="Wallet1" required/>
+            </div>
+            <div class="col-7 mb-3">
+              <label for="addEdit_config_params">Config parameters</label>
+              <input id="addEdit_config_params" class="form-control" type="text" placeholder="0x0000000000000000000000000000000000000002" required/>
+            </div>
+            <div class="col-2 mb-3">
+              <label for="addEdit_config_currency">Currecy: </label>
+              <select id="addEdit_config_currency" class="form-control form-control-select config_currency_select col-10">
+                        <option value="ETH" selected>ETH</option>
+                        <option value="ETC">ETC</option>
+                  </select>
+            </div>
+          </div>
+
+          <p class="addEditConfigErrors d-none text-danger">Please fill all text fields</p>
+          <button class="btn btn-outline-success float-right mt-2">Confirm</button>
+          <button class="btn btn-outline-secondary float-right mt-2 mr-2" class="close" data-dismiss="modal">Cancel</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Edit hardwere modal -->
+  <div class="modal fade" id="editHardwareModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Edit hardware</h3>
+          <button type="button" class="close mr-2" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        </div>
+        <div class="modal-body">
+
+          <div class="ui-widget-content border-0">
+            Number of pins: <input type="number" class="mb-2 numberOfPins" min="1" />
+            <button class="btn btn-sm btn-success" id="changePinsNumber">Change</button>
+            <button class="btn btn-sm btn-dark" id="clearPins">Clear hardware</button>
+            <div class="text-danger mb-2" id="failEditHardware"></div>
+            <div id="pinsHolder">
+            </div>
+            <div class="minerPinsHolder mt-2">
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Confirm box for Hard Resert-->
+  <div class="modal fade" id="confirmHardResetModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <input type="hidden" id="specificHardReset" value="" />
+        <div class="modal-header">
+          Machines to hard restart<button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="listOfHardResetContainer d-none">Those machines will be restartet: </br> <span class="listOfHardReset"></span> </div>
+          <br/>
+          <span class="switch switch-sm">
+            <input type="checkbox" class="switch" id="hardResetSwitch">
+            <label for="hardResetSwitch">Restart machine always when she drop down</label>
+          </span>
+          <div>
+            <button type="button" class="btn btn-primary float-right">Add</button>
+          </div>
+        </div>
+        <div class="modal-footer d-none">
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!--Menage wallets in single machine-->
+  <div class="modal fade" id="menage_machine">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          Manage machine <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-4">Config</div>
+            <div class="col-4">Wallet</div>
+            <!-- <div class="col-4">Currency</div> -->
+          </div>
+          <div class="row mb-2">
+            <div class="col-4">
+              <select class="form-control change_config"></select>
+            </div>
+            <div class="col-4">
+              <select class="form-control change_wallet"></select>
+            </div>
+            <!-- <div class="col-4">
+              <input type="text" disabled style="width: 100px; height: 38px"/>
+            </div> -->
+          </div>
+          <button type="button" class="btn btn-primary confirm_operation float-right">OK</button>
+          <button type="button" class="btn btn-secondary float-right mr-1" data-dismiss="modal">Cancel</button>
+        </div>
+        <!-- dialog buttons -->
+        <div class="modal-footer d-none">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--Main part of site-->
+
+  <main role="main" id="main">
+    <div class="container-fluid justify-content-around mt-4">
+      <div id="alert-infos" class="col-12 alert alert-danger error_message d-none mt-2" role="alert"></div>
+
+      <div class="row" id="dead_machine_container"></div>
+      <div class="row" id="machine_container"></div>
+    </div>
+  </main>
+
+  <!--Template for one machine [START] -->
+  <div class="d-none" id="template_machine">
+    <div class="col-sm-12 col-lg-6 col-xlg-4 col-rt-2 px-0 px-sm-3">
+      <div class="card mb-4">
+        <div class="card-body shadow-lg">
+          <!--Number of machine, krypto and teminal-->
+          <!--PC-->
+          <div class="d-none d-lg-block">
+            <h6 class="row stick_with_card text-center">
+                          <div class="col-3 border-right pt-1 miner_name"></div> <!--<img src="./style/icons/icon_eth.svg" alt="ETH Graphic"/>-->
+                          <div class="col-3 text-left pt-1 pr-0"><span class="currency"></span></div>
+                          <div class="col-6 text-left pt-1 border-left">
+                            <img src="./style/icons/icon_wallet.svg" alt="ETH Graphic"/><span class="wallet pt-2"></span>
+                            <div class="dropdown machine_operation float-right">
+                              <button class="btn bg-white dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <img src="./style/icons/icon_edit.svg" alt="Buttons slider" style="margin-top: -3px"/>
+                              </button>
+                              <div class="dropdown-menu no-transform" aria-labelledby="dropdownMenuButton">
+                                  <!-- <button class="dropdown-item edit" data-toggle="modal" data-target="#EditMachine">Edit</button>
+                                  <div class="dropdown-divider"></div> -->
+                                  <button class="dropdown-item menage_machine" data-toggle="modal" data-target="#menage_machine" data-tooltip="yes">Menage</button>
+                                  <button class="dropdown-item delete" data-toggle="modal" data-target="#confirmOperation" data-tooltip="yes" title="Delete card view from website">Delete</button>
+                                  <button class="dropdown-item reboot" data-toggle="modal" data-target="#confirmOperation" data-tooltip="yes" title="Reboot Claymore">Reboot</button>
+                                  <button class="dropdown-item restart" data-toggle="modal" data-target="#confirmOperation" data-tooltip="yes" title="Restart machine system">Restart</button>
+                                  <button class="dropdown-item hard-reset" data-toggle="modal" data-target="#confirmOperation" data-tooltip="yes" title="Physical reset by special device">Hard Reset</button>
+                                  <div class="dropdown-divider"></div>
+                                  <button class="dropdown-item on_off" data-toggle="modal" data-target="#confirmOperation" data-tooltip="yes" title="Delete card view from website">On/Off machine</button>
+                              </div>
+                          </div>
+            </div>
+          </h6>
+            <div class="row text-left mb-1">
+              <small class="col-12 col-rt-6  miner_total_time"></small>
+              <small class="col-12 col-rt-6  miner_issues"></small>
+            </div>
+          </div>
+          <!--MOBILE -->
+          <div class="d-lg-none">
+            <div class="row">
+            <div class="dropdown machine_operation col-12 text-right">
+              <button class="btn bg-white dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <img src="./style/icons/icon_edit.svg" alt="Buttons slider" style="margin-top: -3px"/>
+              </button>
+              <div class="dropdown-menu no-transform" aria-labelledby="dropdownMenuButton">
+                <!-- <button class="dropdown-item edit" data-toggle="modal" data-target="#EditMachine">Edit</button>
+                <div class="dropdown-divider"></div> -->
+                <button class="dropdown-item menage_machine" data-toggle="modal" data-target="#menage_machine" data-tooltip="yes">Menage</button>
+                <button class="dropdown-item delete" data-toggle="modal" data-target="#confirmOperation">Delete</button>
+                <button class="dropdown-item reboot" data-toggle="modal" data-target="#confirmOperation">Reboot</button>
+                <button class="dropdown-item restart" data-toggle="modal" data-target="#confirmOperation">Restart</button>
+                <button class="dropdown-item hard-reset" data-toggle="modal" data-target="#confirmOperation">Hard Reset</button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item on_off" data-toggle="modal" data-target="#confirmOperation" data-tooltip="yes" title="Delete card view from website">On/Off machine</button>
+              </div>
+            </div>
+          </div>
+            <h6 class="row stick_with_card text-center border-bottom">
+                          <div class="col-3 border-right miner_name"></div>
+                          <div class="col-4 text-left"><span class="currency"></span></div>
+                          <div class="col-5 border-left pl-1 pr-2">
+                            <img src="./style/icons/icon_wallet.svg" alt="ETH Graphic" width="15" height="15"/><span class="wallet"></span>
+                          </div>
+                        </h6>
+          </div>
+
+          <!-- That big blue card in every card with main result for every card-->
+          <!--PC-->
+          <div class="d-none d-md-block">
+            <div class="row stick_with_card my-2 bg-info text-white text-center justify-content-around">
+              <h6 class="col-4 pt-2">Shares</h6>
+              <h6 class="col-4 pt-2">Mh/s</h6>
+              <h6 class="col-4 pt-2">Temp.</h6>
+              <h4 class="col-4 miner_total_shares"><span></span></h4>
+              <h4 class="col-4 miner_total_mhs"><span></span></h4>
+              <h4 class="col-4 miner_total_temp"><span></span></h4>
+            </div>
+
+            <small class="stick_with_card text-center row">
+                  <div style="width: 21%">Single <img src="./style/icons/icon_karta.svg" alt="Card grafic" width="15"/></div>
+                  <div style="width: 9%">Mh/s</div>
+                  <div style="width: 19%">Temp.</div>
+                  <div style="width: 11%">On/Off</div>
+                  <div style="width: 40%">Fan</div>
+              </small>
+          </div>
+          <!--MOBILE-->
+          <div class="d-md-none">
+            <div class="row stick_with_card py-2 text-center justify-content-around">
+              <small class="col-4 border-right font-weight-light">Shares</small>
+              <small class="col-4 border-right font-weight-light">Mh/s</small>
+              <small class="col-4 font-weight-light">Temp.</small>
+              <h6 class="col-4 border-right miner_total_shares"></h6>
+              <h6 class="col-4 border-right miner_total_mhs"></h6>
+              <h6 class="col-4 miner_total_temp"></h6>
+            </div>
+            <div class="row text-left mb-1 border-bottom">
+              <small class="col-12 col-rt-6 miner_total_time"></small>
+              <small class="col-12 col-rt-6 miner_issues"></small>
+            </div>
+          </div>
+
+
+          <!--Data of miners is showing here -->
+          <div class="gpus_container bg-light" id="gpus_container">
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- end template -->
+
+  <!--Templete of single dead machine-->
+  <div class="d-none" id="template_dead_machine">
+    <div class="dead_machine_container">
+      <h6 class="row stick_with_card text-center">
+                  <div class="col-2 border-right "><img src="./style/icons/icon_overhiting.svg" alt="ETH Graphic" style="width:30px; height:30px"/></div>
+                  <div class="col-8 text-left "><span class="miner_name mt-2pt-2"></span> </div>
+                  <div class="dropdown machine_operation float-right">
+                    <button class="btn bg-white dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <img src="./style/icons/icon_edit.svg" alt="Buttons slider" style="margin-top: -3px"/>
+                    </button>
+                    <div class="dropdown-menu no-transform" aria-labelledby="dropdownMenuButton">
+                      <!-- <button class="dropdown-item edit" data-toggle="modal" data-target="#EditMachine">Edit</button>
+                      <div class="dropdown-divider"></div> -->
+                      <button class="dropdown-item menage_machine" data-toggle="modal" data-target="#menage_machine" data-tooltip="yes">Menage</button>
+                      <button class="dropdown-item delete" data-toggle="modal" data-target="#confirmOperation" data-tooltip="yes" title="Delete card view from website">Delete</button>
+                      <button class="dropdown-item reboot" data-toggle="modal" data-target="#confirmOperation" data-tooltip="yes" title="Reboot Claymore">Reboot</button>
+                      <button class="dropdown-item restart" data-toggle="modal" data-target="#confirmOperation" data-tooltip="yes" title="Restart machine system">Restart</button>
+                      <button class="dropdown-item hard-reset" data-toggle="modal" data-target="#confirmOperation" data-tooltip="yes" title="Physical reset by special device">Hard Reset</button>
+                      <div class="dropdown-divider"></div>
+                      <button class="dropdown-item on_off" data-toggle="modal" data-target="#confirmOperation" data-tooltip="yes" title="Delete card view from website">On/Off machine</button>
+                    </div>
+                  </div>
+
+                </h6>
+
+      <div class="row text-left mt-1">
+        <small class="col-12 col-rt-6"></small>
+        <small class="col-12 col-rt-6 miner_issues"></small>
+      </div>
+    </div>
+  </div>
+
+  <!-- single gpu-->
+  <h2 class="d-none" id="gpus_template_element">
+              <div class="row stick_with_card text-center my-2">
+                <!--PC-->
+                <div class="d-none d-md-flex flex-column w-100 border-bottom">
+                  <div class="d-flex flex-fill">
+
+                    <span class="card-status"></span>
+                    <div class="border-right pt-2" style="width: 18%">
+                        <div class="gpu_info d-inline-block"> </div>
+                        <div class="gpu_name d-inline-block"></div>
+                    </div>
+                    <div class="gpu_mhs border-right flex-fill align-self-center"></div>
+                    <div class="gpu_temp border-right flex-fill align-self-center"></div>
+                    <span class="flex-fill border-right switch switch-sm pt-2">
+                      <input type="checkbox" class="switch_change_id"/>
+                      <label class="switch_label"></label>
+                    </span>
+                    <div class="flex-fill fan_css mt-1 mr-0 ">
+                      <select class="form-control fan_select">
+                        <option value="0">auto</option>
+                        <option value="40">40%</option>
+                        <option value="50">50%</option>
+                        <option value="60">60%</option>
+                        <option value="70">70%</option>
+                        <option value="80">80%</option>
+                        <option value="90">90%</option>
+                      </select>
+              </div>
+              <div class="flex-fill mt-2" style="margin-left: -15px; width: 12%"><span class="fan_speed"></span> rpm.</div>
+
+            </div>
+          </div>
+
+          <!--MOBILE-->
+          <div class="d-flex flex-column d-md-none w-100 mobile gpu-shadow">
+            <div class="d-flex flex-fill bg-white">
+
+              <span class="card-status"></span>
+              <div class="flex-fill align-self-center gpu_name border-right "></div>
+
+              <div class="flex-fill border-right">
+                <small>Mh/s</small>
+                <div class="gpu_mhs"></div>
+              </div>
+
+              <div class="flex-fill">
+                <small>Temp.</small>
+                <div class="gpu_temp"></div>
+              </div>
+
+              <div class="flex-fill mt-2">
+                <span class="collapseButton"><img src="./style/icons/icon_arrowDown.svg" width="20" class="collapseArrow"/></span>
+              </div>
+            </div>
+
+            <div class="d-flex h-0 mb-1 mr-0 ">
+              <div class="input-group">
+                <select class="form-control fan_select mt-2">
+                        <option value="auto">auto</option>
+                        <option value="50">50%</option>
+                        <option value="60">60%</option>
+                        <option value="70">70%</option>
+                        <option value="80">80%</option>
+                        <option value="90">90%</option>
+                        <option value="100">100%</option>
+                      </select>
+                <div class="mr-auto pt-3 pr-4 mr-3"><span class="fan_speed"></span> rpm.</div>
+
+                <span class="switch switch-sm ml-auto pt-3 pr-2">
+                      <input type="checkbox" class="switch_change_id_mobile"/>
+                      <label class="switch_label_mobile">On/Off</label>
+                    </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        </h2>
+
+  <div class="d-none" id="machinesResetOptionsTemplate">
+    <div class="" data-miner="name1">
+      <label class="">kop1</label>
+      <div class="droppable reset">
+        <div class="text-center">Reset</div>
+      </div>
+      <div class="droppable power">
+        <div class="text-center">On/Off</div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
